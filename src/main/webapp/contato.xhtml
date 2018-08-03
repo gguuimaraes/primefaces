@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2" xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel header="Formulário" id="panel">
+			<h:panelGrid columns="4">
+				<p:outputLabel for="txtNome" value="Nome" />
+				<p:outputLabel for="txtCPF" value="CPF" />
+				<p:outputLabel for="txtDataNascimento" value="Data Nascimento" />
+				<p:outputLabel for="txtTelefone" value="Telefone" />
+				<p:inputText id="txtNome" value="#{ContatoControl.contato.nome}" required="true"
+					requiredMessage="O Nome é obrigatório" />
+				<p:inputMask id="txtCPF" value="#{ContatoControl.contato.cpf}" mask="999.999.999-99" required="true"
+					requiredMessage="O CPF é obrigatório" validator="cpfValidator" validatorMessage="CPF inválido" />
+				<p:calendar id="txtDataNascimento" value="#{ContatoControl.contato.dataNascimento}" pattern="dd/MM/yyyy"
+					required="true" requiredMessage="A Data de Nascimento é obrigatória" />
+				<p:inputMask id="txtTelefone" value="#{ContatoControl.contato.telefone}" mask="(99) 9999-9999" required="true"
+					requiredMessage="O Telefone é obrigatório" />
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<p:commandButton actionListener="#{ContatoControl.confirmar}" value="Confirmar" update="contatos, panel" />
+				<p:commandButton immediate="true" actionListener="#{ContatoControl.cancelar}" value="Cancelar"
+					update="contatos, panel" />
+			</h:panelGrid>
+		</p:panel>
+
+		<p:dataTable id="contatos" widgetVar="contatos" value="#{ContatoControl.contatos}" var="contato" width="100%"
+			emptyMessage="Sem registros" editable="true">
+			<f:facet name="header">
+				<h:outputText value="Lista de Contatos"></h:outputText>
+			</f:facet>
+			<p:column headerText="Nome" sortBy="#{contato.nome}">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{contato.nome}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{contato.nome}" required="true" requiredMessage="O Nome é obrigatório"
+							style="width: calc(100% - 10px)" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="CPF" sortBy="#{contato.cpf}">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{contato.cpf}">
+							<f:converter converterId="cpfConverter" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input">
+						<p:inputMask value="#{contato.cpf}" mask="999.999.999-99" required="true" requiredMessage="O CPF é obrigatório"
+							validator="cpfValidator" validatorMessage="CPF inválido" style="width: calc(100% - 10px)" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Data de Nascimento" sortBy="#{contato.dataNascimento}">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{contato.dataNascimento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input">
+						<p:calendar value="#{contato.dataNascimento}" pattern="dd/MM/yyyy" required="true"
+							requiredMessage="A Data de Nascimento é obrigatória" inputStyle="width: calc(100% - 10px)" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column headerText="Telefone" sortBy="#{contato.telefone}">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{contato.telefone}">
+							<f:converter converterId="telefoneConverter" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input">
+						<p:inputMask value="#{contato.telefone}" mask="(99) 9999-9999" required="true"
+							requiredMessage="O Telefone é obrigatório" style="width: calc(100% - 10px)" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column style="width: 32px">
+				<p:rowEditor />
+			</p:column>
+
+			<p:column style="width: 16px">
+				<p:commandLink immediate="true" actionListener="#{ContatoControl.excluir(contato)}" update="contatos">
+					<h:outputText class="ui-icon ui-icon-trash" />
+				</p:commandLink>
+			</p:column>
+
+			<p:ajax event="rowEdit" listener="#{ContatoControl.onRowEdit}" />
+			<p:ajax event="rowEditCancel" listener="#{ContatoControl.onRowCancel}" />
+		</p:dataTable>
+	</ui:define>
+</ui:composition>
