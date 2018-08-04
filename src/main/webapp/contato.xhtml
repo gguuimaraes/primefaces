@@ -5,6 +5,7 @@
 	<ui:define name="corpo">
 
 		<p:panel header="Formulário" id="panel">
+			<h:inputHidden id="linha" value="" />
 			<h:panelGrid columns="4">
 				<p:outputLabel for="txtNome" value="Nome" />
 				<p:outputLabel for="txtCPF" value="CPF" />
@@ -15,26 +16,28 @@
 				<p:inputMask id="txtCPF" value="#{ContatoControl.contato.cpf}" mask="999.999.999-99" required="true"
 					requiredMessage="O CPF é obrigatório" validator="cpfValidator" validatorMessage="CPF inválido" />
 				<p:calendar id="txtDataNascimento" value="#{ContatoControl.contato.dataNascimento}" pattern="dd/MM/yyyy"
-					required="true" requiredMessage="A Data de Nascimento é obrigatória" />
+					mask="99/99/9999" required="true" requiredMessage="A Data de Nascimento é obrigatória" />
 				<p:inputMask id="txtTelefone" value="#{ContatoControl.contato.telefone}" mask="(99) 9999-9999" required="true"
 					requiredMessage="O Telefone é obrigatório" />
 			</h:panelGrid>
 			<h:panelGrid columns="2">
-				<p:commandButton actionListener="#{ContatoControl.confirmar}" value="Confirmar" update="contatos, panel" />
-				<p:commandButton immediate="true" actionListener="#{ContatoControl.cancelar}" value="Cancelar"
-					update="contatos, panel" />
+				<p:commandButton actionListener="#{ContatoControl.confirmar}" value="Confirmar" update="panel, contatos" />
+				<p:commandButton immediate="true" actionListener="#{ContatoControl.cancelar}" value="Cancelar" update="panel" />
 			</h:panelGrid>
 		</p:panel>
 
 		<p:dataTable id="contatos" widgetVar="contatos" value="#{ContatoControl.contatos}" var="contato" width="100%"
-			emptyMessage="Sem registros" editable="true">
+			emptyMessage="Sem registros" editable="true" selectionMode="single" selection="#{ContatoControl.contatoSelecionado}"
+			rowKey="#{contato.id}">
 			<f:facet name="header">
 				<h:outputText value="Lista de Contatos"></h:outputText>
 			</f:facet>
 			<p:column headerText="Nome" sortBy="#{contato.nome}">
 				<p:cellEditor>
 					<f:facet name="output">
-						<h:outputText value="#{contato.nome}" />
+						<div onclick="document.getElementById('linha').value = #{rowIndex};">
+							<h:outputText value="#{contato.nome}" />
+						</div>
 					</f:facet>
 					<f:facet name="input">
 						<p:inputText value="#{contato.nome}" required="true" requiredMessage="O Nome é obrigatório"
@@ -95,6 +98,12 @@
 
 			<p:ajax event="rowEdit" listener="#{ContatoControl.onRowEdit}" />
 			<p:ajax event="rowEditCancel" listener="#{ContatoControl.onRowCancel}" />
+			<p:ajax event="rowDblselect" listener="#{ContatoControl.onRowDblClckSelect}" update=":formCorpo:panel" global="false" />
 		</p:dataTable>
+
+		<p:contextMenu for="contatos">
+			<p:menuitem value="Preencher formulário" actionListener="#{ContatoControl.preencherFormulario}" immediate="true"
+				update="panel" />
+		</p:contextMenu>
 	</ui:define>
 </ui:composition>

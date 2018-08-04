@@ -42,6 +42,10 @@ public class Contato {
 		this.telefone = telefone.replaceAll("\\D", "");
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -62,4 +66,9 @@ public class Contato {
 		this.cpf = cpf.replaceAll("\\D", "");
 	}
 
+	@Override
+	public String toString() {
+		return "Contato [id=" + id + ", nome=" + nome + ", telefone=" + telefone + ", dataNascimento=" + dataNascimento
+				+ ", cpf=" + cpf + "]";
+	}
 }
