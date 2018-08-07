@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ public class ContatoControl {
 	public void cancelar(ActionEvent evt) {
 		try {
 			contato = new Contato();
+			PrimeFaces.current().resetInputs("formCorpo");
 			UtilFaces.addMensagemFaces("Operação cancelada");
 		} catch (Exception e) {
 			UtilFaces.addMensagemFaces(e);
@@ -85,22 +87,18 @@ public class ContatoControl {
 		}
 	}
 
-	public void onRowDblClckSelect(SelectEvent event) {
+	public void onRowSelect(SelectEvent event) {
+		contatoSelecionado = (Contato) event.getObject();
+	}
+	
+	public void onRowDblSelect(SelectEvent event) {
 		contato = (Contato) event.getObject();
-		System.out.println(contato.getCpf());
 	}
 
 	public void preencherFormulario() {
-		if (contatoSelecionado == null) {
-			System.out.println("nenhum contato selecionado");
+		if (contatoSelecionado == null) 
 			return;
-		}
-		contato.setId(contatoSelecionado.getId());
-		contato.setCpf(contatoSelecionado.getCpf());
-		contato.setNome(contatoSelecionado.getNome());
-		contato.setDataNascimento(contatoSelecionado.getDataNascimento());
-		contato.setTelefone(contatoSelecionado.getTelefone());
-		System.out.println(contato);
+		contato = contatoSelecionado;
 	}
 
 	public Contato getContato() {
@@ -121,7 +119,6 @@ public class ContatoControl {
 
 	public void setContatoSelecionado(Contato contatoSelecionado) {
 		this.contatoSelecionado = contatoSelecionado;
-		System.out.println("set contatoSelecionado: " + contatoSelecionado);
 	}
 
 }
